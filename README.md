@@ -9,3 +9,10 @@
  - It is the logic what we share with the custom hook not the concrete state.
 
 
+## Infitine loop issues
+
+  In this example there is a problem if we use the custom hook without considering the problem with states and useEffect if we add the function as a dependency.
+
+  This approach will create an infinite loop because every time useEffect calls the fetchTasks function, the sendRequest function will be called on the custom hook and this will set some new states and the component in which we used the custom hook on will re-render because will detect these new states as the component makes use of them implicitly. So the parent component will re-evaluate and execute useEffect by calling the custom hook again and this will recreate the sendRequest function and return a NEW function object and thus useEffect will be executed again as this new function object is mapped to another memory section and React will interpret this as a new function, even if the logic is the same.ç
+
+  To avoid this, we use the useCallback hook to wrap the sendRequest function in the custom hook.
